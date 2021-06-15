@@ -77,7 +77,7 @@ class Configuration:
         self.mqtt_user = None  # type: Optional[str]
         self.mqtt_password = None  # type: Optional[str]
         self.mqtt_ca_cert = None  # type: Optional[str]
-        self.mqtt_ca_certs = None # type: Optional[str]
+        self.mqtt_use_ssl = True # type: Optional[str]
         self.mqtt_client_id = None  # type: Optional[str]
         self.mqtt_trailing_slash = True  # type:bool
         self.mqtt_timestamp_format = None  # type: Optional[str]
@@ -96,8 +96,8 @@ class Configuration:
         if 'ca_cert' in config['mqtt']:
             self.mqtt_ca_cert = config['mqtt']['ca_cert']
 
-        if 'ca_certs' in config['mqtt']:
-            self.mqtt_ca_cert = config['mqtt']['ca_certs']    
+        if 'use_ssl' in config['mqtt']:
+            self.mqtt_use_ssl = config['mqtt']['use_ssl']    
 
         if 'client_id' in config['mqtt']:
             self.mqtt_client_id = config['mqtt']['client_id']
@@ -197,12 +197,11 @@ class PlantGateway:
 
     def _start_client(self):
         self.mqtt_client = mqtt.Client(self.config.mqtt_client_id)
-        if self.config.mqtt_user is not None:
-            self.mqtt_client.username_pw_set(self.config.mqtt_user, self.config.mqtt_password)
-            
-        if self.config.mqtt_ca_cert is not None:
-            self.mqtt_client.tls_set(ca_certs=self.config.mqtt_ca_certs)
-        if self.config.mqtt_ca_certs is not None:
+        if self.config.mqtt_user is not None and self.config.mqtt_use_ssl:
+            # necessary to use ssl and username/password
+            self.mqtt_client.tls_set()
+            self.mqtt_client.username_pw_set(self.config.mqtt_user, self.config.mqtt_password)    
+        elif self.config.mqtt_ca_cert is not None and self.config.mqtt_use_ssl:
             self.mqtt_client.tls_set(certfile=self.config.mqtt_ca_cert, cert_reqs=mqtt.ssl.CERT_REQUIRED)
 
         def _on_connect(client, _, flags, return_code):
