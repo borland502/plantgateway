@@ -28,6 +28,9 @@ mqtt:
     #path to ssl/tls ca file
     #ca_cert: /etc/ssl/certs/<my ca file.pem>
 
+    #path to system certs
+    #ca_certs: /etc/ssl/certs
+
     #format for timestamp string using strftime(), optional as defaults to ISO8601 format
     #timestamp_format: "%d/%m/%y %H:%M:%S"
 

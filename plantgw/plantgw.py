@@ -201,7 +201,9 @@ class PlantGateway:
             self.mqtt_client.username_pw_set(self.config.mqtt_user, self.config.mqtt_password)
             
         if self.config.mqtt_ca_cert is not None or self.config.mqtt_ca_certs is not None:
-            cert_reqs = mqtt.ssl.CERT_REQUIRED if self.config.mqtt_ca_cert is not None else mqtt.ssl.CERT_OPTIONAL
+            cert_reqs = mqtt.ssl.CERT_REQUIRED if self.config.mqtt_ca_cert is not None else mqtt.ssl.CERT_NONE
+            logging.debug(f"certificate requirement {cert_reqs}")
+            logging.debug(f"cert dir {self.config.mqtt_ca_cert}")
             self.mqtt_client.tls_set(ca_certs=self.config.mqtt_ca_certs, certfile=self.config.mqtt_ca_cert, cert_reqs=cert_reqs)
 
         def _on_connect(client, _, flags, return_code):
