@@ -93,11 +93,11 @@ class Configuration:
         if 'password' in config['mqtt']:
             self.mqtt_password = config['mqtt']['password']
 
+        if 'ca_certs' in config['mqtt']:
+            self.mqtt_ca_certs = config['mqtt']['ca_certs']    
+
         if 'ca_cert' in config['mqtt']:
             self.mqtt_ca_cert = config['mqtt']['ca_cert']
-
-        if 'ca_certs' in config['mqtt']:
-            self.mqtt_ca_cert = config['mqtt']['ca_certs']    
 
         if 'client_id' in config['mqtt']:
             self.mqtt_client_id = config['mqtt']['client_id']
@@ -199,9 +199,9 @@ class PlantGateway:
         self.mqtt_client = mqtt.Client(self.config.mqtt_client_id)
 
         if self.config.mqtt_ca_cert is not None:
-            self.mqtt_client.tls_set(ca_certs=self.config.mqtt_ca_certs)
+            self.mqtt_client.tls_set(self.config.mqtt_ca_cert, mqtt.ssl.CERT_REQUIRED)
         if self.config.mqtt_ca_certs is not None:
-            self.mqtt_client.tls_set(certfile=self.config.mqtt_ca_cert, cert_reqs=mqtt.ssl.CERT_REQUIRED)
+            self.mqtt_client.tls_set(ca_certs=self.config.mqtt_ca_certs)
 
         if self.config.mqtt_user is not None:
             self.mqtt_client.username_pw_set(self.config.mqtt_user, self.config.mqtt_password)   
